@@ -14,7 +14,7 @@ An image of a "spider monkey” is perturbed to be classified as a “goldfish�
 
 ## 📦 Features
 
-- 🔍 Support two adversial noise generation algorithms (Fast Gradient ) for FGSM and PGD attacks
+- 🔍 Support two adversial noise generation algorithms Fast Gradient Sign Method (FGSM) and Project Gradient Descent (PGD) attacks
 - 🖼️ Visualizations of original image, perturbation, and adversarial result
 - 📊 Confidence scores for original and adversarial predictions
 - 🧪 Jupyter notebook demo and CLI interface
@@ -31,9 +31,9 @@ adversarial_noise_code_challenge/
 │   ├── attack.py             # Algorithms to generate adversarial images
 │   ├── model.py              # Load models and preprocess image data helper functions
 │   ├── runner.py             # Helper function to run adversarial image generation function 
-│   ├── utils.py              # Helper functions (get prediction confidence and visualize outputs)
+│   └── utils.py              # Helper functions (get prediction confidence and visualize outputs)
 │
-│   main.py                   # CLI main entry point
+├── main.py                   # CLI main entry point
 ├── examples/
 │   └── original_images/      # Sample input images
 │   └── AdversarialDemo.ipynb # Interactive demo with visualizations
@@ -57,11 +57,13 @@ pip install -r requirements.txt
 
 ```bash
 python main.py \
-  --image examples/original_images/dog.JPEG \
+  --image examples/original_images/monkey.JPEG \
   --target_class goldfish \
-  --attack fgsm \
+  --attack pgd \
   --epsilon 0.03 \
-  --model resnet18
+  --model resnet18 \
+  --alpha 0.005 \
+  --steps 10
 ```
 
 ### 3. Run from Jupyter Notebook
