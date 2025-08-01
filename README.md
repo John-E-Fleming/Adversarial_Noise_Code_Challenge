@@ -1,20 +1,20 @@
-# 🧠 Adversarial Image Attacks with FGSM and PGD
+# 🧠 Adversarial Image Attacks
 
-This project demonstrates how to generate adversarial examples using Fast Gradient Sign Method (FGSM) and Projected Gradient Descent (PGD) to fool pretrained image classification models (e.g., ResNet18). The goal is to perturb input images so that a neural network misclassifies them into a specified target class, while the perturbation remains imperceptible to the human eye.
+This project demonstrates how to generate adversarial noise to fool pretrained image classification models (e.g., ResNet18) to misclassify an images as a specified target class. The goal is to perturb input images with the generated adversial noise so that a neural network misclassifies them into a specified target class, while the perturbation remains imperceptible to the human eye.
 
-## 📸 Example
+## 📸 Example Result
 
 <p align="center">
   <img src="results/pgd_algorithm_result_overview.png" width="600" />
 </p>
 
-An image of a “Maltese dog” is perturbed to be classified as a “goldfish” by the model.
+An image of a "spider monkey” is perturbed to be classified as a “goldfish” with high confidence by the model. The Projected Gradient Descent (PGD) algorithm was used to generate the presented image. 
 
 ---
 
 ## 📦 Features
 
-- 🔍 Support for FGSM and PGD attacks
+- 🔍 Support two adversial noise generation algorithms (Fast Gradient ) for FGSM and PGD attacks
 - 🖼️ Visualizations of original image, perturbation, and adversarial result
 - 📊 Confidence scores for original and adversarial predictions
 - 🧪 Jupyter notebook demo and CLI interface
@@ -100,6 +100,14 @@ visualize_attack(result)
 - torchvision
 - matplotlib
 - Pillow
+
+---
+
+## ✅ To Do
+
+ - [ ] Update attack methods to support untargeted attacks also (i.e. just minimize the confidence in the true class label)
+ - [ ] Add evaluation of k-top class predictions (i.e. what classes are increase in prediction confidence following addition of the adversarial noise)
+ - [ ] Include a methods to counteract the affect of or detect images with adversarial noise (i.e. detect adversial images by using a auxillary classifier to detect perturbations -> input gradient norms could be used as an anomaly signal)
 
 ---
 
