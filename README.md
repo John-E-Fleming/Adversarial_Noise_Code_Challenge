@@ -5,7 +5,7 @@ This project demonstrates how to generate adversarial examples using Fast Gradie
 ## 📸 Example
 
 <p align="center">
-  <img src="docs/example_attack.png" width="600" />
+  <img src="results/pgd_algorithm_result_overview.png" width="600" />
 </p>
 
 An image of a “Maltese dog” is perturbed to be classified as a “goldfish” by the model.
