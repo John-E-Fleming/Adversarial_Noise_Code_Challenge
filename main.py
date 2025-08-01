@@ -1,8 +1,5 @@
-import os
 import argparse
-from adversarial_attack_lib.model import load_model, preprocess_image, load_imagenet_classes
-from adversarial_attack_lib.utils import get_confidence, tensor_to_pil
-from adversarial_attack_lib.attack import FGSMAttack, PGDAttack
+from adversarial_attack_lib.runner import run_attack
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Adversarial Attack Demo")
@@ -13,54 +10,24 @@ def parse_args():
     parser.add_argument("--epsilon", type=float, default=0.03, help="Attack strength ε")
     parser.add_argument("--alpha", type=float, default=0.005, help="PGD step size")
     parser.add_argument("--steps", type=int, default=10, help="PGD number of steps")
+
     return parser.parse_args()
 
 def main():
     # Parse command line arguments
     args = parse_args()
 
-    # Load model and class labels
-    model = load_model(args.model)
-    classes = load_imagenet_classes(args.model)
-
-    # Preprocess input
-    img_tensor = preprocess_image(args.image)
-    
-    # Resolve target class index
-    if args.target_class in classes:
-        target_idx = classes.index(args.target_class)
-    else:
-        raise ValueError(f"Class '{args.target_class}' not found in ImageNet labels")
-
-    # Original confidence
-    orig_conf = get_confidence(model, img_tensor, target_idx)
-    print(f"Original confidence for '{args.target_class}': {orig_conf:.4f}")
-
-    # Select the attack algorithm to use
-    if args.attack == "fgsm":
-        # Initialize Fast Gradient Sign Method attack algorithm with specified parameters
-        attack = FGSMAttack(epsilon=args.epsilon)
-    elif args.attack == "pgd":
-        # Initialize Project Gradient Descent attack algorithm with specified parameters
-        attack = PGDAttack(epsilon=args.epsilon, alpha=args.alpha, steps=args.steps)
-    else:
-        raise ValueError(f"Unknown attack type: {args.attack}")
-    
-    # Generate adversarial image
-    adv_tensor = attack.generate(model, img_tensor, target_idx)
-
-    # Get confidence of adversarial image
-    adv_conf = get_confidence(model, adv_tensor, target_idx)
-    print(f"Adversarial confidence for '{args.target_class}': {adv_conf:.4f}")
-
-    # Save outputs
-    out_dir = "results"
-    os.makedirs(out_dir, exist_ok=True)
-    orig_pil = tensor_to_pil(img_tensor)
-    adv_pil = tensor_to_pil(adv_tensor)
-    orig_pil.save(os.path.join(out_dir, "original.png"))
-    adv_pil.save(os.path.join(out_dir, "adversarial.png"))
-    print(f"Saved original and adversarial images to '{out_dir}/'")
+    # Main runner function to generate adversarial image to be misclassified as target class
+    run_attack(
+        image_path=args.image,
+        target_class=args.target_class,
+        attack_type=args.attack,
+        epsilon=args.epsilon,
+        alpha=args.alpha,
+        steps=args.steps,
+        model_name=args.model, 
+        save_output=True,
+    )
 
 if __name__ == "__main__":
     main()
