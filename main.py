@@ -6,6 +6,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Adversarial Attack Demo")
     parser.add_argument("--image", type=str, required=True, help="Path to input image")
     parser.add_argument("--target_class", type=str, required=True, help="Target class name (e.g. 'airliner')")
+    parser.add_argument("--model", type=str, default="resnet18", help="Model architecture (e.g. resnet18, resnet50)")
     return parser.parse_args()
 
 def main():
@@ -13,8 +14,8 @@ def main():
     args = parse_args()
 
     # Load model and class labels
-    model = load_model("resnet18")
-    classes = load_imagenet_classes("resnet18")
+    model = load_model(args.model)
+    classes = load_imagenet_classes(args.model)
 
     # Preprocess input
     img_tensor = preprocess_image(args.image)
