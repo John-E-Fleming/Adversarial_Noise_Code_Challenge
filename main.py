@@ -2,14 +2,17 @@ import os
 import argparse
 from adversarial_attack_lib.model import load_model, preprocess_image, load_imagenet_classes
 from adversarial_attack_lib.utils import get_confidence, tensor_to_pil
-from adversarial_attack_lib.attack import FGSMAttack
+from adversarial_attack_lib.attack import FGSMAttack, PGDAttack
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Adversarial Attack Demo")
     parser.add_argument("--image", type=str, required=True, help="Path to input image")
     parser.add_argument("--target_class", type=str, required=True, help="Target class name (e.g. 'goldfish')")
-    parser.add_argument("--epsilon", type=float, default=0.03, help="Attack strength ε")
     parser.add_argument("--model", type=str, default="resnet18", help="Model architecture (e.g. resnet18, resnet50)")
+    parser.add_argument("--attack", choices=["fgsm", "pgd"], default="fgsm", help="Type of attack algorithm to implement")
+    parser.add_argument("--epsilon", type=float, default=0.03, help="Attack strength ε")
+    parser.add_argument("--alpha", type=float, default=0.005, help="PGD step size")
+    parser.add_argument("--steps", type=int, default=10, help="PGD number of steps")
     return parser.parse_args()
 
 def main():
@@ -33,8 +36,17 @@ def main():
     orig_conf = get_confidence(model, img_tensor, target_idx)
     print(f"Original confidence for '{args.target_class}': {orig_conf:.4f}")
 
-    # Run Fast Gradient Sign Method attack, i.e. generate adversarial image
-    attack = FGSMAttack(epsilon=args.epsilon)
+    # Select the attack algorithm to use
+    if args.attack == "fgsm":
+        # Initialize Fast Gradient Sign Method attack algorithm with specified parameters
+        attack = FGSMAttack(epsilon=args.epsilon)
+    elif args.attack == "pgd":
+        # Initialize Project Gradient Descent attack algorithm with specified parameters
+        attack = PGDAttack(epsilon=args.epsilon, alpha=args.alpha, steps=args.steps)
+    else:
+        raise ValueError(f"Unknown attack type: {args.attack}")
+    
+    # Generate adversarial image
     adv_tensor = attack.generate(model, img_tensor, target_idx)
 
     # Get confidence of adversarial image

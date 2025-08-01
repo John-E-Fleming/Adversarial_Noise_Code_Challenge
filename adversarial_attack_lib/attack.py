@@ -63,3 +63,68 @@ class FGSMAttack(AdversarialAttack):
         adv_image = torch.clamp(adv_image, min=min_pixel, max=max_pixel)
 
         return adv_image.detach()
+    
+
+class PGDAttack(AdversarialAttack):
+    """
+    Implements the Projected Gradient Descent (PGD) adversarial attack.
+
+    PGD is an iterative version of FGSM where multiple small perturbation
+    steps are taken, and the result is projected back into a valid ε-ball
+    around the original image after each step.
+
+    This method is considered one of the most effective first-order attacks.
+    """
+    def __init__(self, epsilon=0.03, alpha=0.005, steps=10):
+        """
+        Args:
+            epsilon (float): Maximum total perturbation allowed.
+            alpha (float): Step size per iteration.
+            steps (int): Number of attack iterations.
+        """
+        self.epsilon = epsilon
+        self.alpha = alpha
+        self.steps = steps
+
+    def generate(self, model, image_tensor, target_class):
+        """
+        Generates an adversarial image using PGD.
+
+        Args:
+            model (torch.nn.Module): Pre-trained classification model.
+            image_tensor (torch.Tensor): Input image tensor (1 x C x H x W).
+            target_class (int): Index of the desired target class.
+
+        Returns:
+            torch.Tensor: Adversarial image tensor.
+        """
+        # Clone original image for projection constraint
+        orig = image_tensor.clone().detach()
+
+        # Initialize perturbed image with small random noise
+        perturbed = orig.clone().detach() + 0.001 * torch.randn_like(orig)
+        
+        # Get the target class tensor
+        target = torch.tensor([target_class], device=orig.device)
+
+        for _ in range(self.steps):
+            # Forward pass and compute loss (maximize target class score)
+            perturbed.requires_grad = True
+            output = model(perturbed)
+            
+            # Targeted PGD: minimize loss toward the target class
+            loss = F.cross_entropy(output, target)
+            
+            model.zero_grad()
+            loss.backward()
+
+            # Apply gradient ascent step
+            grad_sign = perturbed.grad.detach().sign()
+            perturbed = perturbed - self.alpha * grad_sign
+
+            # Project back to ε-ball around the original image (in norm constrained space)
+            delta = torch.clamp(perturbed - orig, min=-self.epsilon, max=self.epsilon)
+            perturbed = (orig + delta).detach()
+
+        return perturbed.detach()
+
