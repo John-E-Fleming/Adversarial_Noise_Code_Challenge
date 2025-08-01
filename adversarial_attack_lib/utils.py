@@ -94,8 +94,8 @@ def visualize_attack_result(result, adv_label="target"):
     orig_conf = result.get("original_confidence", None)
     adv_conf = result.get("adversarial_confidence", None)
 
-    orig_title = f'“{adv_label}”\n{orig_conf*100:.1f}% confidence' if orig_conf is not None else f'“{orig_class}”'
-    adv_title = f'“{target_class}”\n{adv_conf*100:.1f}% confidence' if adv_conf is not None else f'“{target_class}”'
+    orig_title = f'Original Prediction\n“{adv_label}”\n{orig_conf*100:.1f}% confidence' if orig_conf is not None else f'“{orig_class}”'
+    adv_title = f'Updated Prediction\n“{target_class}”\n{adv_conf*100:.1f}% confidence' if adv_conf is not None else f'“{target_class}”'
 
     # Plot
     fig, axes = plt.subplots(1, 3, figsize=(10, 4))
@@ -106,7 +106,7 @@ def visualize_attack_result(result, adv_label="target"):
 
     axes[1].imshow(noise_img)
     axes[1].axis('off')
-    axes[1].set_title(r"+ ϵ", fontsize=16)
+    axes[1].set_title(f'Adverserial Noise\n(+ ϵ)', fontsize=11)
 
     axes[2].imshow(adv_img)
     axes[2].axis('off')
