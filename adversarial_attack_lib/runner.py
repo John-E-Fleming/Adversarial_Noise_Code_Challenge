@@ -55,6 +55,10 @@ def run_attack(image_path, target_class, attack_type="fgsm", epsilon=0.03, alpha
     # Preprocess the input image
     img_tensor = preprocess_image(image_path)
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    img_tensor = img_tensor.to(device)
+
     # Cofirm target class is valid
     if target_class not in classes:
         raise ValueError(f"Target class '{target_class}' not found in ImageNet labels.")

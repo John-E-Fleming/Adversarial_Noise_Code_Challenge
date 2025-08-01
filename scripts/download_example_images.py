@@ -15,7 +15,7 @@ SELECTED = [
 
 # Downloads selected example images from the repository
 # and saves them to the specified directory
-def download_selected(save_dir="examples/original_images"):
+def download_selected_images(save_dir="examples/original_images"):
     os.makedirs(save_dir, exist_ok=True)
     for synset, label, fname in SELECTED:
         url = f"{REPO_BASE}/{synset}_{label}.JPEG"
@@ -31,4 +31,4 @@ def download_selected(save_dir="examples/original_images"):
                 print(f"❌ Failed to download {label}: {e}")
 
 if __name__ == "__main__":
-    download_selected()
+    download_selected_images()
