@@ -53,7 +53,7 @@ adversarial_noise_code_challenge/
 pip install -r requirements.txt
 ```
 
-### 2. Run from Python Script
+### 2. Run Python Script from the Command Line
 
 ```bash
 python main.py \
@@ -107,6 +107,7 @@ visualize_attack(result)
 
 ## ✅ To Do
 
+ - [ ] Add additional early stopping conditions for the PGD algorithm implementation (i.e. stop when prediction confidence in target class is above a specified threshold)
  - [ ] Update attack methods to support untargeted attacks also (i.e. just minimize the confidence in the true class label)
  - [ ] Add evaluation of k-top class predictions (i.e. what classes are increase in prediction confidence following addition of the adversarial noise)
  - [ ] Include a methods to counteract the affect of or detect images with adversarial noise (i.e. detect adversial images by using a auxillary classifier to detect perturbations -> input gradient norms could be used as an anomaly signal)
